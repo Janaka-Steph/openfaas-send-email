@@ -1,0 +1,17 @@
+version: 1.0
+provider:
+  name: openfaas
+  #gateway: https://openfaas.rogue-paprika.top
+  #gateway: https://openfaas-ingress-janaka-steph.cloud.okteto.net
+  gateway: http://127.0.0.1:8080
+
+functions:
+  send-email:
+    lang: node12${DEV}
+    handler: ./function
+    image: janakasteph/send-email:${DEV:-latest}
+    #image: registry.cloud.okteto.net/janaka-steph/send-email:${DEV:-latest}
+    secrets:
+      - config
+    environment:
+      write_debug: true

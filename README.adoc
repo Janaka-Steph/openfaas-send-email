@@ -1,0 +1,48 @@
+= Send Email OpenFaaS Function
+
+== Running the prod locally
+
+.In one tab
+ kubectl port-forward svc/gateway -n openfaas 8080:8080
+
+.In a other tab
+ faas up
+
+
+== Developing with Okteto
+
+.Build a dev image
+ DEV=dev faas build
+
+.Push that image to a remote container registry
+ DEV=dev faas push
+
+.Start Okteto
+ cd function
+
+ okteto up
+
+Inside Okteto console:
+
+.Install dependencies
+ cd function
+
+ npm ci
+
+.Run `fwatchdog` with nodemon
+ cd ..
+
+ npm run start
+
+
+== Calling the Function
+
+ curl --header "Content-Type: application/json" --request POST --data '{"from_name": "John", "from_email": "john@live.com", "message":
+"Hello World"}' http://127.0.0.1:8080/function/send-email
+
+
+== Secrets
+
+Configuration variables are stored in `.env` file.
+
+ faas secret create config --from-file=.env
