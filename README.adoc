@@ -32,7 +32,7 @@ Inside Okteto console:
 .Run `fwatchdog` with nodemon
  cd ..
 
- npm run start
+ fwatchdog
 
 
 == Calling the Function

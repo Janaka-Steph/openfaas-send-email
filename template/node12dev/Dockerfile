@@ -1,4 +1,4 @@
-FROM openfaas/of-watchdog:0.7.2 as watchdog
+FROM openfaas/of-watchdog:0.7.7 as watchdog
 FROM node:12.13.0-alpine as ship
 
 COPY --from=watchdog /fwatchdog /usr/bin/fwatchdog
@@ -20,6 +20,9 @@ COPY package.json ./
 
 # This ordering means the npm installation is cached for the outer function handler.
 RUN npm i
+
+# Install nodemon globally to restart fwatchdog on code change
+RUN npm i -g nodemon
 
 # Copy outer function handler
 COPY index.js ./
@@ -49,7 +52,9 @@ RUN chown app:app -R /home/app \
 USER app
 
 ENV cgi_headers="true"
-ENV fprocess="nodemon index.js"
+#Set in okteto.yml to take effect
+#Docker doesn't allow redefinition of ENV vars across layers
+#ENV fprocess="nodemon index.js"
 ENV mode="http"
 ENV upstream_url="http://127.0.0.1:3000"
 

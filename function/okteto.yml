@@ -3,13 +3,9 @@ name: send-email
 image: janakasteph/send-email:dev
 labels:
   faas_function: send-email
-command:
-  - sh
 workdir: /home/app
 mountpath: /home/app/function
 persistentVolume:
   enabled: true
-#resources:
-#  limits:
-#    cpu: 2
-#    memory: 4Gi
+environment:
+  - fprocess=nodemon index.js

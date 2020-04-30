@@ -16,7 +16,7 @@ const dotenv = require('dotenv')
 module.exports = async (event, context) => {
 
   // Validate event.body
-  console.log('event.body//', event.body)
+  console.log('event.body', event.body)
 
   const {from_name, from_email, message} = event.body
 
