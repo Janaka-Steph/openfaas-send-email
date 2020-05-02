@@ -11,7 +11,7 @@ const bodyParser = require('body-parser')
 if (process.env.RAW_BODY === 'true') {
     app.use(bodyParser.raw({ type: '*/*' }))
 } else {
-    var jsonLimit = process.env.MAX_JSON_SIZE || '100kb' //body-parser default
+    const jsonLimit = process.env.MAX_JSON_SIZE || '100kb' //body-parser default
     app.use(bodyParser.json({ limit: jsonLimit}));
     app.use(bodyParser.raw()); // "Content-Type: application/octet-stream"
     app.use(bodyParser.text({ type : "text/*" }));
@@ -41,7 +41,6 @@ class FunctionContext {
         if(!value) {
             return this.value;
         }
-
         this.value = value;
         return this;
     }
@@ -50,7 +49,6 @@ class FunctionContext {
         if(!value) {
             return this.headerValues;
         }
-
         this.headerValues = value;
         return this;
     }
@@ -58,46 +56,41 @@ class FunctionContext {
     succeed(value) {
         let err;
         this.cbCalled++;
-        console.log('this.cbCalled', this.cbCalled)
         this.cb(err, value);
     }
 
     fail(value) {
-        let message;
         this.cbCalled++;
-        this.cb(value, message);
+        this.cb(value);
     }
 }
 
-var middleware = async (req, res) => {
-    let cb = (err, functionResult) => {
+const middleware = async (req, res) => {
+    const cb = (err, functionResult) => {
         if (err) {
             console.error(err);
-
             return res.status(500).send(err.toString ? err.toString() : err);
         }
 
         if(isArray(functionResult) || isObject(functionResult)) {
-            console.log('TEST1', JSON.stringify(functionResult))
-            res.set(fnContext.headers()).status(fnContext.status()).send(JSON.stringify(functionResult));
+            return res.set(fnContext.headers()).status(fnContext.status()).send(JSON.stringify(functionResult));
         } else {
-            console.log('TEST2', functionResult)
-            res.set(fnContext.headers()).status(fnContext.status()).send(functionResult);
+            return res.set(fnContext.headers()).status(fnContext.status()).send(functionResult);
         }
     };
 
-    let fnEvent = new FunctionEvent(req);
-    let fnContext = new FunctionContext(cb);
+    const fnEvent = new FunctionEvent(req);
+    const fnContext = new FunctionContext(cb);
 
     Promise.resolve(handler(fnEvent, fnContext, cb))
-    .then(res => {
-        if(!fnContext.cbCalled) {
-            fnContext.succeed(res);
-        }
-    })
-    .catch(e => {
-        cb(e);
-    });
+      .then(res => {
+          if(!fnContext.cbCalled) {
+              fnContext.succeed(res);
+          }
+      })
+      .catch(e => {
+          cb(e);
+      });
 };
 
 app.post('/*', middleware);
@@ -112,10 +105,10 @@ app.listen(port, () => {
     console.log(`OpenFaaS Node.js listening on port: ${port}`)
 });
 
-let isArray = (a) => {
+const isArray = (a) => {
     return (!!a) && (a.constructor === Array);
 };
 
-let isObject = (a) => {
+const isObject = (a) => {
     return (!!a) && (a.constructor === Object);
 };

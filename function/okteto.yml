@@ -8,4 +8,7 @@ mountpath: /home/app/function
 persistentVolume:
   enabled: true
 environment:
-  - fprocess=nodemon index.js
+  #- fprocess=nodemon index.js
+  - fprocess=nodemon --inspect=0.0.0.0:9229 index.js
+forward:
+  - 9229:9229

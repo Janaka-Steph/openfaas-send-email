@@ -3,6 +3,7 @@
 
 # WebStorm
 .idea/
+.run/
 
 # Mac OSx
 .DS_Store
