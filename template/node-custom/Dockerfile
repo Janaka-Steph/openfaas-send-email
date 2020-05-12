@@ -1,5 +1,5 @@
 FROM openfaas/of-watchdog:0.7.7 as watchdog
-FROM node:12.13.0-alpine as ship
+FROM node:14.2-alpine as ship
 
 COPY --from=watchdog /fwatchdog /usr/bin/fwatchdog
 RUN chmod +x /usr/bin/fwatchdog
@@ -20,6 +20,9 @@ COPY package.json ./
 
 # This ordering means the npm installation is cached for the outer function handler.
 RUN npm i
+
+# Install nodemon globally to restart fwatchdog on code change
+RUN npm i -g nodemon
 
 # Copy outer function handler
 COPY index.js ./
@@ -60,4 +63,3 @@ ENV read_timeout="15s"
 HEALTHCHECK --interval=3s CMD [ -e /tmp/.lock ] || exit 1
 
 CMD ["fwatchdog"]
-

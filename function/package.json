@@ -1,7 +1,14 @@
 {
   "name": "send-email",
-  "version": "3.0.0",
+  "version": "1.0.0",
+  "description": "Generic OpenFaaS function for sending emails",
   "license": "MIT",
+  "author": {
+    "name": "Stephane Roche",
+    "email": "bitcoin-studio@protonmail.com",
+    "url": "https://bitcoin-studio.com"
+  },
+  "type": "module",
   "main": "handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0"
@@ -9,6 +16,6 @@
   "dependencies": {
     "dotenv": "^8.2.0",
     "nodemailer": "^6.4.6",
-    "yup": "^0.28.4"
+    "yup": "^0.28.5"
   }
 }

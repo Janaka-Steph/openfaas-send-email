@@ -1,6 +1,11 @@
-= Send Email OpenFaaS Function
+= Generic OpenFaaS function for sending emails
 
-== Running the prod locally
+== OpenFaaS Template
+
+ faas template pull https://github.com/Janaka-Steph/openfaas-node-template
+
+
+== Running the function locally
 
 .In one tab
  kubectl port-forward svc/gateway -n openfaas 8080:8080
@@ -11,14 +16,8 @@
 
 == Developing with Okteto
 
-.Make sure the prod image is deployed
+.Make sure the function is deployed
  faas up
-
-.Build a dev image
- DEV=dev faas build
-
-.Push that image to a remote container registry
- DEV=dev faas push
 
 .Start Okteto
  cd function
@@ -38,10 +37,9 @@ Inside Okteto console:
  fwatchdog
 
 
-== Calling the Function
+== Curling the Function
 
- curl -i --header "Content-Type: application/json" --request POST --data '{"from_name": "John", "from_email": "john@live.com", "message":
-"Hello World"}' http://127.0.0.1:8080/function/send-email
+ curl -i --header "Content-Type: application/json" --request POST --data '{"from_name": "John", "from_email": "john@live.com", "message":"Hello World", "to_email": "bitcoin-studio@protonmail.com", "subject": "Bitcoin Studio Website Form"}' https://openfaas-ingress-janaka-steph.cloud.okteto.net/function/send-email
 
 
 == Secrets

@@ -1,12 +1,8 @@
-// Copyright (c) Alex Ellis 2017. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+import bodyParser from 'body-parser'
+import express from 'express'
+import handler from './function/handler.js'
 
-"use strict"
-
-const express = require('express')
 const app = express()
-const handler = require('./function/handler');
-const bodyParser = require('body-parser')
 
 if (process.env.RAW_BODY === 'true') {
     app.use(bodyParser.raw({ type: '*/*' }))

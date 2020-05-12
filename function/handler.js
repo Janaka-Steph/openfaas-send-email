@@ -1,33 +1,31 @@
-"use strict"
+import fs from 'fs'
+import nodemailer from 'nodemailer'
+import yup from 'yup'
+import dotenv from 'dotenv'
 
-const fs = require("fs")
-const nodemailer = require('nodemailer')
-const Yup = require('yup')
-const dotenv = require('dotenv')
-
-module.exports = async (event, context) => {
+export default async (event) => {
   const {from_name, from_email, to_email, message, subject} = event.body
 
-  const schema = Yup.object().shape({
-    from_name: Yup.string()
+  const schema = yup.object().shape({
+    from_name: yup.string()
       .trim()
       .min(2, 'from_name must be at min 2 chars long')
       .max(50, 'from_name must be at max 50 chars long')
       .required('from_name is required'),
-    from_email: Yup.string()
+    from_email: yup.string()
       .trim()
       .email('from_email is not valid')
       .required('from_email is required'),
-    to_email: Yup.string()
+    to_email: yup.string()
       .trim()
       .email('to_email is not valid')
       .required('to_email is required'),
-    message: Yup.string()
+    message: yup.string()
       .trim()
       .min(2, 'message must be at min 2 chars long')
       .max(2000, 'message must be at max 2000 chars long')
       .required('message is required'),
-    subject: Yup.string()
+    subject: yup.string()
       .trim()
       .min(2, 'subject must be at min 2 chars long')
       .max(200, 'subject must be at max 200 chars long')
@@ -37,7 +35,6 @@ module.exports = async (event, context) => {
   await schema.validate(event.body)
   return sendEmail(from_name, from_email, to_email, message, subject)
 }
-
 
 const sendEmail = (from_name, from_email, to_email, message, subject) => {
   const config = fs.readFileSync('/var/openfaas/secrets/config', 'utf8')

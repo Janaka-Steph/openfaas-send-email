@@ -7,10 +7,10 @@ provider:
 
 functions:
   send-email:
-    lang: node12${DEV}
+    lang: node-custom
     handler: ./function
     #image: janakasteph/send-email:${DEV:-latest}
-    image: registry.cloud.okteto.net/janaka-steph/send-email:${DEV:-latest}
+    image: registry.cloud.okteto.net/janaka-steph/send-email
     secrets:
       - config
     environment:

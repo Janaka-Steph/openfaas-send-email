@@ -1,6 +1,4 @@
 name: send-email
-#image: registry.cloud.okteto.net/janaka-steph/send-email:dev
-image: janakasteph/send-email:dev
 labels:
   faas_function: send-email
 workdir: /home/app
@@ -8,7 +6,6 @@ mountpath: /home/app/function
 persistentVolume:
   enabled: true
 environment:
-  #- fprocess=nodemon index.js
   - fprocess=nodemon --inspect=0.0.0.0:9229 index.js
 forward:
   - 9229:9229
