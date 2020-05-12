@@ -11,6 +11,9 @@
 
 == Developing with Okteto
 
+.Make sure the prod image is deployed
+ faas up
+
 .Build a dev image
  DEV=dev faas build
 
@@ -37,7 +40,7 @@ Inside Okteto console:
 
 == Calling the Function
 
- curl --header "Content-Type: application/json" --request POST --data '{"from_name": "John", "from_email": "john@live.com", "message":
+ curl -i --header "Content-Type: application/json" --request POST --data '{"from_name": "John", "from_email": "john@live.com", "message":
 "Hello World"}' http://127.0.0.1:8080/function/send-email
 
 
