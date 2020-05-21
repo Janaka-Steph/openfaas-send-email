@@ -39,7 +39,12 @@ Inside Okteto console:
 
 == Curling the Function
 
- curl -i --header "Content-Type: application/json" --request POST --data '{"from_name": "John", "from_email": "john@live.com", "message":"Hello World", "to_email": "bitcoin-studio@protonmail.com", "subject": "Bitcoin Studio Website Form"}' https://openfaas-ingress-janaka-steph.cloud.okteto.net/function/send-email
+.POST Request
+ curl -i \
+-H "Content-Type: application/json" \
+-H "Origin: https://bitcoin-studio-client.rogue-paprika.top/contact" \
+-d '{"from_name":"John","from_email":"john@live.com","message":"Hello","to_email":"bitcoin-studio@protonmail.com","subject":"Form"}' \
+https://openfaas.rogue-paprika.top/function/send-email
 
 
 == Secrets
