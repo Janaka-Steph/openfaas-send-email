@@ -4,7 +4,8 @@ import yup from 'yup'
 import dotenv from 'dotenv'
 
 export default async (event) => {
-  const {from_name, from_email, to_email, message, subject} = event.body
+  const body = parseBody(event.body)
+  let {from_name, from_email, to_email, message, subject} = body
 
   const schema = yup.object().shape({
     from_name: yup.string()
@@ -33,11 +34,18 @@ export default async (event) => {
   })
 
   await schema.validate(event.body)
+
+  if (subject === 'CSP Violation Report') {
+    const payload = JSON.parse(message.payload)
+    const msg = {...payload, ...message.headers}
+    message = JSON.stringify(msg,null, 2)
+  }
+
   return sendEmail(from_name, from_email, to_email, message, subject)
 }
 
 const sendEmail = (from_name, from_email, to_email, message, subject) => {
-  const config = fs.readFileSync('/var/openfaas/secrets/config', 'utf8')
+  const config = fs.readFileSync('/var/openfaas/secrets/send-email-config', 'utf8')
   const {EMAIL, SMTP_GMAIL_PASS} = dotenv.parse(config)
 
   const mailOptions = {
@@ -58,4 +66,12 @@ const sendEmail = (from_name, from_email, to_email, message, subject) => {
   })
 
   return transporter.sendMail(mailOptions)
+}
+
+const parseBody = (str) => {
+  try {
+    return JSON.parse(str)
+  } catch (e) {
+    return str
+  }
 }

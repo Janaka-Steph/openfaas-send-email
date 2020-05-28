@@ -49,6 +49,7 @@ https://openfaas.rogue-paprika.top/function/send-email
 
 == Secrets
 
-Configuration variables are stored in `.env` file.
+Configuration variables are stored in `.env` file. +
+Also, make sure OPENFAAS_URL env var is set properly before running `faas` commands.
 
- faas secret create config --from-file=.env
+ faas secret create send-email-config --from-file=.env
