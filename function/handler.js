@@ -1,10 +1,22 @@
+import crypto from 'crypto'
+import dotenv from 'dotenv'
 import fs from 'fs'
 import nodemailer from 'nodemailer'
 import yup from 'yup'
-import dotenv from 'dotenv'
+import {promisify} from 'util'
+
+const readFile = promisify(fs.readFile)
 
 export default async (event) => {
   const body = parseBody(event.body)
+
+  // Check HMAC
+  const hmacKey = await readFile('/var/openfaas/secrets/hmac-cluster', 'utf8')
+  const messageMAC = event.headers['hmac']
+  if (!validateHMAC(JSON.stringify(body), hmacKey, messageMAC)) {
+    throw new Error('HMAC validation failed')
+  }
+
   let {from_name, from_email, to_email, message, subject} = body
 
   const schema = yup.object().shape({
@@ -44,8 +56,8 @@ export default async (event) => {
   return sendEmail(from_name, from_email, to_email, message, subject)
 }
 
-const sendEmail = (from_name, from_email, to_email, message, subject) => {
-  const config = fs.readFileSync('/var/openfaas/secrets/send-email-config', 'utf8')
+const sendEmail = async (from_name, from_email, to_email, message, subject) => {
+  const config = await readFile('/var/openfaas/secrets/send-email-config', 'utf8')
   const {EMAIL, SMTP_GMAIL_PASS} = dotenv.parse(config)
 
   const mailOptions = {
@@ -73,5 +85,28 @@ const parseBody = (str) => {
     return JSON.parse(str)
   } catch (e) {
     return str
+  }
+}
+
+const validateHMAC = (message, hmacKey, hash) => {
+  const receivedHash = getHash(hash)
+  const createdHash = crypto.createHmac('sha256', hmacKey)
+   .update(message)
+   .digest('hex')
+  return receivedHash === createdHash
+}
+
+// GitHub and the sign flag prefix the hash with "sha1="
+const getHash = (hash) => {
+  if (hash) {
+    if (hash.startsWith('sha1=')) {
+      return hash.substring(5)
+    } else if (hash.startsWith('sha256=')) {
+      return hash.substring(7)
+    } else {
+      return hash
+    }
+  } else {
+    throw new Error('HMAC should be provided in the request header')
   }
 }
