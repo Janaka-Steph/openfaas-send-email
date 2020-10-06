@@ -1,4 +1,4 @@
-FROM openfaas/of-watchdog:0.7.7 as watchdog
+FROM openfaas/of-watchdog:0.8.1 as watchdog
 FROM node:14-alpine as ship
 
 COPY --from=watchdog /fwatchdog /usr/bin/fwatchdog
